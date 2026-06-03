@@ -1,0 +1,12 @@
+{
+  "name": "innova-project",
+  "version": "1.0.0",
+  "description": "Estructura básica de package.json para el proyecto Innova",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"No hay pruebas aún\" && exit 0"
+  },
+  "author": "",
+  "license": "MIT"
+}

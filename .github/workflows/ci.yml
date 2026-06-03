@@ -1,1 +1,42 @@
+name: CI Laboral Platform Node.js
 
+#  EVENTOS DE DISPARO (Triggers)
+on:
+  push:
+    branches: [ "main", "develop" ] # Se activa en DEV (develop) y PROD (main)
+  pull_request:
+    branches: [ "main" ]           # Filtro de calidad antes de fusionar a PROD
+
+#  TRABAJOS EN PARALELO (Jobs)
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    # Estrategia Matrix: Probar el sistema en Node 18 y Node 20 para robustez
+    strategy:
+      matrix:
+        node-version: [18, 20]
+
+    steps:
+    # PASO 1: Descargar el código del repositorio en la máquina virtual
+    - name: Checkout del codigo
+      uses: actions/checkout@v4
+
+    # PASO 2: Levantar el entorno de Node.js con la versión de la matriz
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: "npm" # Cache para instalaciones ultra rápidas
+
+    # PASO 3: Instalación limpia y estricta de dependencias (Requiere package-lock.json)
+    - name: Instalar dependencias del proyecto
+      run: npm ci
+
+    # PASO 4: Ejecución del set de Pruebas Unitarias / Comprobación básica
+    - name: Ejecutar pruebas unitarias
+      run: npm test
+
+    # PASO 5: Compilación del Build de producción (Prueba final de compilación)
+    - name: Construir aplicacion de produccion
+      run: npm run build
